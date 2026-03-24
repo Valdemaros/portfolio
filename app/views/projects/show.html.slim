@@ -1,0 +1,18 @@
+h1 = @project.title
+
+p = @project.description
+
+- if @project.project_url.present?
+  p
+    strong Сайт:
+    = @project.project_url
+
+- if @project.github_url.present?
+  p
+    strong GitHub:
+    = @project.project_url
+
+/= link_to "Редактировать", edit_project_path(@project)
+/= link_to "Назад", projects_path(@project)
+/= button_to "Удалить", @project, method: :delete
+
