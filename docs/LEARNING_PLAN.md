@@ -2,10 +2,10 @@
 
 ## Цель
 
-Сделать простой сайт-портфолио как у [apavlyut.ru](https://www.apavlyut.ru/):
+Сделать сайт-портфолио как у [apavlyut.ru](https://www.apavlyut.ru/):
 - Главная с проектами
-- Страница проекта
-- Контакты
+- Страница всех проектов
+- Страница услуг
 
 ## Технологии
 
@@ -13,460 +13,315 @@
 |------------|-------|
 | Rails 8 | MVC, REST, Active Record |
 | Tailwind CSS | Стили |
+| Slim | Шаблонизатор (не ERB!) |
 | Hotwire | Turbo (SPA без JS) + Stimulus (немного JS) |
 | PostgreSQL | База данных |
 | Kamal 2 | Деплой на VPS |
-| Solid Queue | Фоновые задачи (встроен в Rails 8) |
 
 ---
 
-# 2 НЕДЕЛИ / 14 ДНЕЙ
+## Структура сайта
 
 ```
-Неделя 1: Rails + БД + Tailwind
-Неделя 2: Hotwire + Деплой
+/                    → pages#home         (Главная)
+/projects            → projects#index     (Список проектов)
+/projects/:id        → projects#show      (Страница проекта)
+/services            → pages#services     (Услуги)
+
 ```
 
 ---
 
-# НЕДЕЛЯ 1: Rails + БД + Tailwind
+# ПРОГРЕСС
+
+| День | Тема | Статус |
+|------|------|--------|
+| 1 | Проект и первая страница | ✅ Готово |
+| 2 | Модели и БД | ✅ Готово |
+| 3 | Layout + Главная страница | ✅ Готово |
+| 4 | Страница проектов | 🔄 В процессе |
+| 5 | Страница услуг | ⬜ Не начато |
+| 7 | Seed данные + связи | ⬜ Не начато |
+| 8-9 | Turbo (SPA навигация) | ⬜ Не начато |
+| 11-12 | Подготовка к деплою | ⬜ Не начато |
+| 13-14 | Деплой на Kamal 2 | ⬜ Не начато |
 
 ---
 
-## День 1: Проект и первая страница
+# ДЕНЬ 1-2: Проект и модели (ПРОЙДЕНО)
 
-### Цель
-Создать Rails проект, настроить Tailwind, сделать главную страницу.
+✅ Проект создан
+✅ Модели: Project, Technology, ProjectTechnology, Service
+✅ Seeds базовые
 
-### Задачи
+---
+
+# ДЕНЬ 3: Layout + Главная страница (ПРОЙДЕНО)
+
+✅ Layout исправлен (убран container из main)
+✅ Переписано на Slim
+✅ CRUD удалён (не нужен на публичном сайте)
+✅ home.html.slim: Navbar, Hero, Для кого, Категории, Проекты, Технологии, Footer
+
+---
+
+# ДЕНЬ 4: Страница проектов
+
+## Цель
+Стилизовать `/projects` — список всех проектов с карточками.
+
+## Текущее состояние
+Файл `projects/index.html.slim` — черновик, нужен дизайн.
+
+## Задачи
 
 | # | Задача | Время |
 |---|--------|-------|
-| 1 | Создать Rails 8 проект | 30 мин |
-| 2 | Создать БД | 10 мин |
-| 3 | Запустить сервер | 10 мин |
-| 4 | Создать PagesController | 30 мин |
-| 5 | Настроить routes | 20 мин |
-| 6 | Изучить структуру | 30 мин |
+| 1 | Стилизовать список проектов в сетку | 30 мин |
+| 2 | Добавить карточки с hover-эффектами | 30 мин |
+| 3 | Вывести технологии проекта | 20 мин |
+| 4 | Добавить ссылку на show | 10 мин |
 
-### Команды
+## Пример структуры
 
-```bash
-# Проект уже создан в /home/vladimir/ruby/portfolio/web
-cd /home/vladimir/ruby/portfolio/web
+```slim
+/ app/views/projects/index.html.slim
 
-# Создать БД
-rails db:create
+section.py-16
+  .container.mx-auto.px-4
+    h1.text-4xl.font-bold.mb-8 Все проекты
 
-# Запустить сервер
-bin/dev
+    .grid.grid-cols-1.md:grid-cols-2.lg:grid-cols-3.gap-6
+      - @projects.each do |project|
+        = link_to project, class: "group"
+          article.border.rounded-lg.overflow-hidden.hover:shadow-lg.transition
+            / Картинка
+            .aspect-video.bg-stone-200
+              - if project.image_url.present?
+                = image_tag project.image_url, class: "w-full h-full object-cover"
+
+            / Контент
+            .p-4
+              h3.font-bold.group-hover:text-red-600
+                = project.title
+
+              p.text-stone-600.text-sm.mt-1
+                = truncate(project.description, length: 100)
+
+              / Технологии
+              - if project.technologies.any?
+                .flex.flex-wrap.gap-1.mt-3
+                  - project.technologies.each do |tech|
+                    span.px-2.py-0.5.bg-stone-100.text-xs.rounded
+                      = tech.name
 ```
 
-### config/routes.rb
-
-```ruby
-Rails.application.routes.draw do
-  root "pages#home"
-  get "about", to: "pages#about"
-  get "contact", to: "pages#contact"
-end
-```
-
-### app/controllers/pages_controller.rb
-
-```ruby
-class PagesController < ApplicationController
-  def home
-  end
-
-  def about
-  end
-
-  def contact
-  end
-end
-```
-
-### app/views/pages/home.html.erb
-
-```erb
-<div class="min-h-screen flex items-center justify-center">
-  <div class="text-center">
-    <h1 class="text-4xl font-bold">Привет, я Владимир</h1>
-    <p class="text-xl text-gray-600 mt-4">Веб-разработчик на Ruby on Rails</p>
-  </div>
-</div>
-```
-
-### Результат дня
-- [x] Проект создан
-- [x] localhost:3000 открывает страницу
-- [x] /about работает
-- [x] /contact работает
-- [x] Коммит сделан
+## Результат дня
+- [ ] Сетка карточек работает
+- [ ] Hover эффекты
+- [ ] Технологии выводятся
+- [ ] Ссылки на show работают
 
 ---
 
-## День 2: Модели и БД
+# ДЕНЬ 5: Страница проекта (show)
 
-### Цель
-Создать модели: Project, Technology.
+## Цель
+Стилизовать `/projects/:id` — страница отдельного проекта.
 
-### Задачи
+## Текущее состояние
+Файл `projects/show.html.slim` — черновик.
+
+## Задачи
 
 | # | Задача | Время |
 |---|--------|-------|
-| 1 | Спроектировать схему БД | 30 мин |
-| 2 | Создать модели | 30 мин |
-| 3 | Добавить связи | 30 мин |
-| 4 | Добавить валидации | 30 мин |
-| 5 | Тест в rails console | 30 мин |
+| 1 | Дизайн страницы проекта | 45 мин |
+| 2 | Вывести все поля (описание, ссылки) | 30 мин |
+| 3 | Добавить technologies | 15 мин |
+| 4 | Кнопка "Назад к проектам" | 10 мин |
 
-### Команды
+## Пример структуры
 
-```bash
-# Модель Project
-rails g model Project name:string description:text url:string featured:boolean position:integer
+```slim
+/ app/views/projects/show.html.slim
 
-# Модель Technology
-rails g model Technology name:string icon:string
+section.py-16
+  .container.mx-auto.px-4
+    / Заголовок
+    .mb-8
+      = link_to "← Все проекты", projects_path, class: "text-red-600 hover:underline"
+      h1.text-4xl.font-bold.mt-4 = @project.title
 
-# Связующая таблица
-rails g model ProjectTechnology project:references technology:references
+    / Картинка
+    - if @project.image_url.present?
+      .aspect-video.bg-stone-200.rounded-lg.overflow-hidden.mb-8
+        = image_tag @project.image_url, class: "w-full h-full object-cover"
 
-# Применить миграции
-rails db:migrate
+    / Описание
+    .prose.max-w-none.mb-8
+      p = @project.description
+
+    / Технологии
+    - if @project.technologies.any?
+      .mb-8
+        h2.text-xl.font-bold.mb-3 Технологии
+        .flex.flex-wrap.gap-2
+          - @project.technologies.each do |tech|
+            span.px-3.py-1.bg-stone-100.rounded-full
+              = tech.name
+
+    / Ссылки
+    .flex.gap-4
+      - if @project.project_url.present?
+        = link_to "Смотреть сайт", @project.project_url,
+            class: "bg-red-700 text-white px-6 py-2 rounded-lg",
+            target: "_blank"
+
+      - if @project.github_url.present?
+        = link_to "GitHub", @project.github_url,
+            class: "border px-6 py-2 rounded-lg",
+            target: "_blank"
 ```
 
-### app/models/project.rb
-
-```ruby
-class Project < ApplicationRecord
-  has_many :project_technologies, dependent: :destroy
-  has_many :technologies, through: :project_technologies
-
-  validates :name, presence: true
-  validates :description, presence: true
-
-  scope :featured, -> { where(featured: true).order(position: :asc) }
-  scope :published, -> { order(position: :asc) }
-end
-```
-
-### app/models/technology.rb
-
-```ruby
-class Technology < ApplicationRecord
-  has_many :project_technologies, dependent: :destroy
-  has_many :projects, through: :project_technologies
-
-  validates :name, presence: true, uniqueness: true
-end
-```
-
-### app/models/project_technology.rb
-
-```ruby
-class ProjectTechnology < ApplicationRecord
-  belongs_to :project
-  belongs_to :technology
-
-  validates :project_id, uniqueness: { scope: :technology_id }
-end
-```
-
-### Тест в консоли
-
-```bash
-rails console
-```
-
-```ruby
-# Создать технологию
-ruby = Technology.create!(name: "Ruby", icon: "💎")
-rails = Technology.create!(name: "Rails", icon: "🚂")
-
-# Создать проект
-project = Project.create!(
-  name: "hh.ru Парсер",
-  description: "Парсер вакансий с использованием API hh.ru",
-  featured: true,
-  position: 1
-)
-
-# Добавить технологии
-project.technologies << [ruby, rails]
-
-# Проверить
-project.technologies.pluck(:name)
-# => ["Ruby", "Rails"]
-```
-
-### Результат дня
-- [x] 3 таблицы в БД
-- [x] Модели с валидациями
-- [x] Связь many-to-many работает
-- [x] Коммит сделан
+## Результат дня
+- [ ] Страница проекта выглядит хорошо
+- [ ] Все поля выводятся
+- [ ] Ссылки работают
 
 ---
 
-## День 3: CRUD для проектов
+# ДЕНЬ 6: Страница услуг
 
-### Цель
-Создать CRUD: список, создание, редактирование, удаление проектов.
+## Цель
+Создать страницу `/services` со списком услуг.
 
-### Задачи
+## Модель уже есть!
+Модель `Service` уже создана с полями:
+- title
+- description
+- icon_url
+- position
+
+## Задачи
 
 | # | Задача | Время |
 |---|--------|-------|
-| 1 | Создать ProjectsController | 30 мин |
-| 2 | Добавить маршруты | 10 мин |
-| 3 | Написать actions | 60 мин |
-| 4 | Создать views | 60 мин |
-| 5 | Протестировать | 30 мин |
+| 1 | Добавить route | 5 мин |
+| 2 | Добавить action в PagesController | 10 мин |
+| 3 | Создать services.html.slim | 45 мин |
+| 4 | Обновить seeds для Services | 15 мин |
 
-### config/routes.rb
+## config/routes.rb
 
 ```ruby
-Rails.application.routes.draw do
-  root "pages#home"
-  resources :projects
-  get "about", to: "pages#about"
-  get "contact", to: "pages#contact"
+get "services", to: "pages#services"
+```
+
+## app/controllers/pages_controller.rb
+
+```ruby
+def services
+  @services = Service.all.order(:position)
 end
 ```
 
-### app/controllers/projects_controller.rb
+## Пример структуры
 
-```ruby
-class ProjectsController < ApplicationController
-  before_action :set_project, only: [:show, :edit, :update, :destroy]
+```slim
+/ app/views/pages/services.html.slim
 
-  def index
-    @projects = Project.published
-  end
+section.py-16
+  .container.mx-auto.px-4
+    h1.text-4xl.font-bold.text-center.mb-4 Услуги
+    p.text-stone-600.text-center.mb-12
+      | Разработка и поддержка веб-проектов
 
-  def show
-  end
+    .grid.grid-cols-1.md:grid-cols-2.lg:grid-cols-3.gap-8
+      - @services.each do |service|
+        article.p-6.border.rounded-lg.hover:shadow-lg.transition
+          / Иконка (если есть)
+          - if service.icon_url.present?
+            .w-12.h-12.mb-4
+              = image_tag service.icon_url, class: "w-full h-full object-contain"
 
-  def new
-    @project = Project.new
-  end
-
-  def create
-    @project = Project.new(project_params)
-
-    if @project.save
-      redirect_to @project, notice: "Проект создан"
-    else
-      render :new, status: :unprocessable_entity
-    end
-  end
-
-  def edit
-  end
-
-  def update
-    if @project.update(project_params)
-      redirect_to @project, notice: "Проект обновлён"
-    else
-      render :edit, status: :unprocessable_entity
-    end
-  end
-
-  def destroy
-    @project.destroy
-    redirect_to projects_url, notice: "Проект удалён"
-  end
-
-  private
-
-  def set_project
-    @project = Project.find(params[:id])
-  end
-
-  def project_params
-    params.require(:project).permit(:name, :description, :url, :featured, :position, technology_ids: [])
-  end
-end
+          h2.text-xl.font-bold.mb-2 = service.title
+          p.text-stone-600 = service.description
 ```
 
-### app/views/projects/index.html.erb
-
-```erb
-<div class="container mx-auto px-4 py-8">
-  <div class="flex justify-between items-center mb-8">
-    <h1 class="text-3xl font-bold">Проекты</h1>
-    <%= link_to "Новый проект", new_project_path, class: "bg-red-700 text-white px-4 py-2 rounded" %>
-  </div>
-
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-    <% @projects.each do |project| %>
-      <div class="border rounded-lg p-4 hover:shadow-md transition">
-        <h2 class="text-xl font-bold"><%= project.name %></h2>
-        <p class="text-gray-600 mt-1"><%= truncate(project.description, length: 100) %></p>
-        <div class="mt-4 flex gap-2">
-          <%= link_to "Открыть", project, class: "text-blue-600" %>
-          <%= link_to "Редактировать", edit_project_path(project), class: "text-green-600" %>
-        </div>
-      </div>
-    <% end %>
-  </div>
-</div>
-```
-
-### Результат дня
-- [ ] /projects показывает список
-- [ ] Создание проекта работает
-- [ ] Редактирование работает
-- [ ] Удаление работает
-- [ ] Коммит сделан
+## Результат дня
+- [ ] Страница /services работает
+- [ ] Услуги выводятся из БД
+- [ ] Дизайн готов
 
 ---
 
-## День 4: Layout, Navbar, Footer
+# ДЕНЬ 7: Seed данные и связи
 
-### Цель
-Создать общий layout с навигацией.
+## Цель
+Заполнить БД реалистичными данными с правильными связями.
 
-### Задачи
+## Текущее состояние
+- Seeds есть, но без связей Project ↔ Technology
+- Нет image_url у проектов
+
+## Задачи
 
 | # | Задача | Время |
 |---|--------|-------|
-| 1 | Создать _navbar.html.erb | 45 мин |
-| 2 | Создать _footer.html.erb | 30 мин |
-| 3 | Обновить application.html.erb | 30 мин |
-| 4 | Добавить flash messages | 20 мин |
+| 1 | Добавить связи в seeds | 30 мин |
+| 2 | Добавить image_url | 20 мин |
+| 3 | Добавить больше проектов | 30 мин |
+| 4 | Протестировать | 20 мин |
 
-### app/views/layouts/application.html.erb
-
-```erb
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Портфолио</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <%= csrf_meta_tags %>
-  <%= csp_meta_tag %>
-  <%= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
-</head>
-<body class="bg-stone-50 text-stone-800 min-h-screen flex flex-col">
-
-  <%= render "shared/navbar" %>
-
-  <% if notice || alert %>
-    <div class="container mx-auto px-4 mt-4">
-      <% if notice %>
-        <div class="bg-green-50 border-l-4 border-green-500 text-green-700 px-4 py-3">
-          <%= notice %>
-        </div>
-      <% end %>
-      <% if alert %>
-        <div class="bg-red-50 border-l-4 border-red-500 text-red-700 px-4 py-3">
-          <%= alert %>
-        </div>
-      <% end %>
-    </div>
-  <% end %>
-
-  <main class="flex-1">
-    <%= yield %>
-  </main>
-
-  <%= render "shared/footer" %>
-</body>
-</html>
-```
-
-### app/views/shared/_navbar.html.erb
-
-```erb
-<nav class="bg-stone-900 text-white">
-  <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-    <%= link_to root_path, class: "text-xl font-bold" do %>
-      Vladimir
-    <% end %>
-
-    <div class="flex gap-6">
-      <%= link_to "Главная", root_path, class: hover:text-red-400 transition" %>
-      <%= link_to "Проекты", projects_path, class: "hover:text-red-400 transition" %>
-      <%= link_to "Контакты", contact_path, class: "hover:text-red-400 transition" %>
-    </div>
-  </div>
-</nav>
-```
-
-### app/views/shared/_footer.html.erb
-
-```erb
-<footer class="bg-stone-900 text-white mt-auto">
-  <div class="container mx-auto px-4 py-8">
-    <div class="flex justify-between">
-      <div>
-        <h3 class="font-bold mb-2">Контакты</h3>
-        <p class="text-stone-400">Email: your@email.com</p>
-        <p class="text-stone-400">Telegram: @yourname</p>
-      </div>
-      <div class="text-stone-500">
-        © <%= Date.current.year %> Vladimir
-      </div>
-    </div>
-  </div>
-</footer>
-```
-
-### Результат дня
-- [ ] Navbar на всех страницах
-- [ ] Footer прижат к низу
-- [ ] Flash messages работают
-- [ ] Коммит сделан
-
----
-
-## День 5: Seed данные
-
-### Цель
-Заполнить БД тестовыми данными.
-
-### db/seeds.rb
+## db/seeds.rb (обновить)
 
 ```ruby
 puts "Очистка БД..."
 ProjectTechnology.destroy_all
 Project.destroy_all
 Technology.destroy_all
+Service.destroy_all
 
 puts "Создание технологий..."
 technologies = {
-  ruby: Technology.create!(name: "Ruby", icon: "💎"),
-  rails: Technology.create!(name: "Rails", icon: "🚂"),
-  tailwind: Technology.create!(name: "Tailwind CSS", icon: "🎨"),
-  postgresql: Technology.create!(name: "PostgreSQL", icon: "🐘"),
-  telegram: Technology.create!(name: "Telegram API", icon: "✈️"),
+  ruby: Technology.create!(name: "Ruby", color: "#CC342D"),
+  rails: Technology.create!(name: "Rails", color: "#CC0000"),
+  postgresql: Technology.create!(name: "PostgreSQL", color: "#336791"),
+  tailwind: Technology.create!(name: "Tailwind CSS", color: "#38B2AC"),
+  hotwire: Technology.create!(name: "Hotwire", color: "#7B68EE"),
+  kamal: Technology.create!(name: "Kamal", color: "#1572B6"),
+  telegram: Technology.create!(name: "Telegram API", color: "#0088CC"),
 }
 
 puts "Создание проектов..."
 projects_data = [
   {
-    name: "hh.ru Парсер",
-    description: "Автоматизированный парсер вакансий с использованием API hh.ru.",
+    title: "Ruby School",
+    description: "Онлайн школа изучения Ruby. Курсы для начинающих и продвинутых.",
+    image_url: "https://placehold.co/600x400/CC342D/white?text=Ruby+School",
+    project_url: "https://example.com",
     featured: true,
     position: 1,
-    technologies: [:ruby]
+    technologies: [:ruby, :rails]
   },
   {
-    name: "Telegram Бот",
-    description: "Бот для Telegram с уведомлениями и автоматизацией задач.",
+    title: "Telegram Bot",
+    description: "Бот для поиска вакансий с hh.ru по API.",
+    image_url: "https://placehold.co/600x400/0088CC/white?text=Telegram+Bot",
+    github_url: "https://github.com/example/bot",
     featured: true,
     position: 2,
     technologies: [:ruby, :telegram]
   },
   {
-    name: "Сайт-портфолио",
-    description: "Персональный сайт-портфолио на Ruby on Rails с Tailwind CSS.",
+    title: "Портфолио",
+    description: "Этот сайт — персональное портфолио на Rails 8.",
+    image_url: "https://placehold.co/600x400/CC0000/white?text=Portfolio",
+    github_url: "https://github.com/example/portfolio",
     featured: true,
     position: 3,
-    technologies: [:ruby, :rails, :tailwind, :postgresql]
+    technologies: [:ruby, :rails, :tailwind, :hotwire, :kamal]
   },
 ]
 
@@ -474,488 +329,138 @@ projects_data.each do |data|
   techs = data.delete(:technologies)
   project = Project.create!(data)
   techs.each { |t| project.technologies << technologies[t] }
-  puts "  Создан проект: #{project.name}"
+  puts "  Создан: #{project.title}"
 end
+
+puts "Создание услуг..."
+services_data = [
+  { title: "Разработка сайтов", description: "Любой сложности — от лендинга до портала.", position: 1 },
+  { title: "Telegram боты", description: "Автоматизация и интеграции через API.", position: 2 },
+  { title: "Консультации", description: "Помощь с архитектурой и кодом.", position: 3 },
+]
+
+services_data.each { |data| Service.create!(data) }
 
 puts "\nГотово!"
 puts "Проектов: #{Project.count}"
 puts "Технологий: #{Technology.count}"
+puts "Услуг: #{Service.count}"
 ```
 
 ```bash
-rails db:seed
+rails db:reset  # Очистит и заполнит заново
 ```
 
-### Результат дня
-- [ ] 3 проекта созданы
-- [ ] 5 технологий созданы
-- [ ] Коммит сделан
+## Результат дня
+- [ ] Связи работают
+- [ ] Картинки есть
+- [ ] Данные реалистичные
 
 ---
 
-## День 6-7: Tailwind стилизация
+# ДЕНЬ 8-9: Navbar и Footer в partials
 
-### Цель
-Сделать красивые карточки проектов и главную страницу.
+## Цель
+Вынести Navbar и Footer в отдельные файлы.
 
-### app/views/pages/home.html.erb
+## Зачем
+Сейчас Navbar и Footer в home.html.slim. Нужно переиспользовать на всех страницах.
 
-```erb
-<!-- Hero -->
-<section class="bg-stone-900 text-white py-20">
-  <div class="container mx-auto px-4 text-center">
-    <h1 class="text-4xl md:text-6xl font-bold mb-4">
-      Веб-разработка<br>
-      <span class="text-red-500">любой сложности</span>
-    </h1>
-    <p class="text-xl text-stone-300 mb-8">
-      От идеи до запуска и развития
-    </p>
-    <%= link_to "Смотреть проекты", projects_path,
-        class: "inline-block bg-red-700 hover:bg-red-600 text-white px-8 py-3 rounded-lg font-medium transition" %>
-  </div>
-</section>
+## Задачи
 
-<!-- Projects -->
-<section class="py-16">
-  <div class="container mx-auto px-4">
-    <h2 class="text-3xl font-bold text-center mb-12">Проекты</h2>
+| # | Задача | Время |
+|---|--------|-------|
+| 1 | Создать shared/_navbar.html.slim | 20 мин |
+| 2 | Создать shared/_footer.html.slim | 20 мин |
+| 3 | Обновить layout | 10 мин |
+| 4 | Удалить из home.html.slim | 10 мин |
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      <% Project.featured.each do |project| %>
-        <%= link_to project, class: "group block" do %>
-          <article class="bg-white rounded-xl border border-stone-200 overflow-hidden
-                          hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+## app/views/shared/_navbar.html.slim
 
-            <!-- Image placeholder -->
-            <div class="aspect-video bg-gradient-to-br from-stone-100 to-stone-200
-                        flex items-center justify-center">
-              <span class="text-6xl opacity-30">💻</span>
-            </div>
+```slim
+nav.bg-stone-800.text-white.py-4
+  .container.mx-auto.px-4.flex.justify-between.items-center
+    = link_to root_path, class: "flex.items-center.gap-3"
+      .w-10.h-10.bg-red-700.rounded-full
+      div
+        .text-xl Владимир
 
-            <!-- Content -->
-            <div class="p-5">
-              <h3 class="text-lg font-bold group-hover:text-red-700 transition">
-                <%= project.name %>
-              </h3>
-              <p class="text-stone-600 text-sm mt-2 line-clamp-2">
-                <%= project.description %>
-              </p>
-
-              <!-- Technologies -->
-              <% if project.technologies.any? %>
-                <div class="flex flex-wrap gap-1 mt-3">
-                  <% project.technologies.each do |tech| %>
-                    <span class="px-2 py-0.5 bg-stone-100 text-stone-600 text-xs rounded-full">
-                      <%= tech.name %>
-                    </span>
-                  <% end %>
-                </div>
-              <% end %>
-            </div>
-          </article>
-        <% end %>
-      <% end %>
-    </div>
-  </div>
-</section>
-
-<!-- Technologies -->
-<section class="py-12 bg-white border-t border-stone-200">
-  <div class="container mx-auto px-4">
-    <h2 class="text-2xl font-bold text-center mb-8">Технологии</h2>
-
-    <div class="flex flex-wrap justify-center gap-3">
-      <% Technology.all.each do |tech| %>
-        <div class="flex items-center gap-2 px-4 py-2 bg-stone-50 rounded-full border border-stone-200">
-          <span class="text-xl"><%= tech.icon %></span>
-          <span class="text-stone-700"><%= tech.name %></span>
-        </div>
-      <% end %>
-    </div>
-  </div>
-</section>
+    .flex.gap-6
+      = link_to "Главная", root_path, class: "hover:text-red-400"
+      = link_to "Проекты", projects_path, class: "hover:text-red-400"
+      = link_to "Услуги", services_path, class: "hover:text-red-400"
 ```
 
-### Результат
-- [ ] Hero секция
-- [ ] Карточки проектов с hover
-- [ ] Технологии
-- [ ] Адаптив
+## app/views/layouts/application.html.slim
+
+```slim
+doctype html
+html
+  head
+    title = content_for(:title) || "Портфолио"
+    / ... остальное ...
+  body.h-full
+    = render "shared/navbar"
+
+    main
+      = yield
+
+    = render "shared/footer"
+```
+
+## Результат
+- [ ] Navbar и Footer в partials
+- [ ] Работают на всех страницах
 
 ---
 
-# НЕДЕЛЯ 2: Hotwire + Деплой
+# ДЕНЬ 10-11: Turbo (SPA навигация)
 
----
+## Цель
+Навигация без перезагрузки страницы.
 
-## День 8: Turbo Drive и Frames
-
-### Цель
-Настроить навигацию без перезагрузки.
-
-### Что такое Turbo
+## Что такое Turbo
 
 ```
 Turbo Drive:
 - Перехватывает клики по ссылкам
 - Загружает страницы через AJAX
 - Обновляет body без перезагрузки
-
-Turbo Frames:
-- Обновляет часть страницы
-- Идеально для форм и списков
+- Работает автоматически!
 ```
 
-### Пример: форма в модальном окне
+## Уже работает!
+Rails 8 включает Turbo по умолчанию. Просто проверь:
+- Клик по ссылке → страница меняется без перезагрузки
+- Кнопка "Назад" работает мгновенно
 
-```erb
-<!-- Ссылка открывает в frame -->
-<%= link_to "Новый проект", new_project_path, data: { turbo_frame: "modal" } %>
+## Turbo Frames (опционально)
 
-<!-- Frame для модального окна -->
-<%= turbo_frame_tag "modal" %>
 ```
 
-### app/views/projects/new.html.erb
-
-```erb
-<%= turbo_frame_tag "modal" do %>
-  <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-    <div class="bg-white rounded-xl shadow-2xl max-w-lg w-full mx-4 p-6">
-      <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-bold">Новый проект</h2>
-        <%= link_to "✕", projects_path, class: "text-2xl text-gray-400" %>
-      </div>
-
-      <%= render "form", project: @project %>
-    </div>
-  </div>
-<% end %>
-```
-
-### Результат дня
-- [ ] Навигация без перезагрузки
-- [ ] Форма в модальном окне
-- [ ] Коммит сделан
+## Результат
+- [ ] Навигация без перезагрузки работает
 
 ---
 
-## День 9: Turbo Streams
+# ДЕНЬ 12-13: Деплой на Kamal 2
 
-### Цель
-CRUD без перезагрузки страницы.
-
-### 7 действий Turbo Streams
-
-```
-1. append    - добавить в конец
-2. prepend   - добавить в начало
-3. replace   - заменить элемент
-4. update    - обновить содержимое
-5. remove    - удалить элемент
-6. before    - вставить перед
-7. after     - вставить после
-```
-
-### app/controllers/projects_controller.rb (обновить)
-
-```ruby
-def create
-  @project = Project.new(project_params)
-
-  respond_to do |format|
-    if @project.save
-      format.turbo_stream
-      format.html { redirect_to @project, notice: "Проект создан" }
-    else
-      format.turbo_stream { render :new, status: :unprocessable_entity }
-      format.html { render :new, status: :unprocessable_entity }
-    end
-  end
-end
-
-def destroy
-  @project.destroy
-  respond_to do |format|
-    format.turbo_stream
-    format.html { redirect_to projects_path, notice: "Проект удалён" }
-  end
-end
-```
-
-### app/views/projects/create.turbo_stream.erb
-
-```erb
-<%= turbo_stream.append "projects" do %>
-  <%= render "projects/project_card", project: @project %>
-<% end %>
-
-<%= turbo_stream.update "modal" do %>
-<% end %>
-```
-
-### app/views/projects/destroy.turbo_stream.erb
-
-```erb
-<%= turbo_stream.remove dom_id(@project) %>
-```
-
-### Результат дня
-- [ ] Создание без перезагрузки
-- [ ] Удаление без перезагрузки
-- [ ] Коммит сделан
-
----
-
-## День 10: Stimulus JS
-
-### Цель
-Добавить немного JavaScript: toggle, clipboard.
-
-### Что такое Stimulus
-
-```
-Stimulus = HTML + минимальный JS
-
-3 концепта:
-1. Controllers   - data-controller="name"
-2. Targets       - data-name-target="element"
-3. Actions       - data-action="click->name#method"
-```
-
-### app/javascript/controllers/toggle_controller.js
-
-```javascript
-import { Controller } from "@hotwired/stimulus"
-
-export default class extends Controller {
-  static targets = ["content"]
-
-  toggle() {
-    this.contentTarget.classList.toggle("hidden")
-  }
-}
-```
-
-### Использование
-
-```erb
-<div data-controller="toggle">
-  <button data-action="click->toggle#toggle">Показать/скрыть</button>
-  <div data-toggle-target="content" class="hidden">
-    Скрытый контент
-  </div>
-</div>
-```
-
-### app/javascript/controllers/clipboard_controller.js
-
-```javascript
-import { Controller } from "@hotwired/stimulus"
-
-export default class extends Controller {
-  static values = { text: String }
-
-  async copy(event) {
-    event.preventDefault()
-    await navigator.clipboard.writeText(this.textValue)
-    alert("Скопировано!")
-  }
-}
-```
-
-### Использование
-
-```erb
-<button data-controller="clipboard"
-        data-clipboard-text-value="your@email.com"
-        data-action="click->clipboard#copy">
-  Скопировать email
-</button>
-```
-
-### Результат дня
-- [ ] Toggle контроллер работает
-- [ ] Clipboard контроллер работает
-- [ ] Коммит сделан
-
----
-
-## День 11: Контактная форма
-
-### Цель
-Создать форму для связи.
-
-### app/controllers/contacts_controller.rb
-
-```ruby
-class ContactsController < ApplicationController
-  def create
-    @contact = Contact.new(contact_params)
-
-    if @contact.save
-      redirect_to contact_path, notice: "Сообщение отправлено!"
-    else
-      render "pages/contact", status: :unprocessable_entity
-    end
-  end
-
-  private
-
-  def contact_params
-    params.require(:contact).permit(:name, :email, :message)
-  end
-end
-```
-
-### app/views/pages/contact.html.erb
-
-```erb
-<div class="container mx-auto px-4 py-12">
-  <div class="max-w-2xl mx-auto">
-    <h1 class="text-4xl font-bold mb-4">Связаться со мной</h1>
-    <p class="text-stone-600 mb-8">
-      Есть проект или вопрос? Напишите мне.
-    </p>
-
-    <%= form_with model: Contact.new, url: contacts_path, class: "space-y-6" do |f| %>
-      <div>
-        <%= f.label :name, "Ваше имя", class: "block text-sm font-medium mb-1" %>
-        <%= f.text_field :name, class: "w-full px-4 py-3 border rounded-lg" %>
-      </div>
-
-      <div>
-        <%= f.label :email, "Email", class: "block text-sm font-medium mb-1" %>
-        <%= f.email_field :email, class: "w-full px-4 py-3 border rounded-lg" %>
-      </div>
-
-      <div>
-        <%= f.label :message, "Сообщение", class: "block text-sm font-medium mb-1" %>
-        <%= f.text_area :message, rows: 5, class: "w-full px-4 py-3 border rounded-lg" %>
-      </div>
-
-      <%= f.submit "Отправить", class: "bg-red-700 text-white px-6 py-3 rounded-lg cursor-pointer" %>
-    <% end %>
-
-    <div class="mt-12 pt-8 border-t">
-      <h2 class="font-bold mb-4">Другие способы связи</h2>
-      <p class="text-stone-600">Email: your@email.com</p>
-      <p class="text-stone-600">Telegram: @yourname</p>
-    </div>
-  </div>
-</div>
-```
-
-### config/routes.rb
-
-```ruby
-resources :contacts, only: [:create]
-```
-
-### Результат дня
-- [ ] Форма работает
-- [ ] Валидация работает
-- [ ] Сообщения сохраняются в БД
-- [ ] Коммит сделан
-
----
-
-## День 12-13: Подготовка к деплою
-
-### Цель
-Подготовить проект к продакшену.
-
-### config/environments/production.rb
-
-```ruby
-Rails.application.configure do
-  config.enable_reloading = false
-  config.eager_load = true
-  config.consider_all_requests_local = false
-  config.action_controller.perform_caching = true
-  config.force_ssl = true
-  config.log_level = :info
-
-  config.public_file_server.enabled = ENV["RAILS_SERVE_STATIC_FILES"].present?
-  config.active_storage.service = :local
-end
-```
-
-### Проверить
-
-```bash
-# Прекомпиляция assets
-rails assets:precompile RAILS_ENV=production
-
-# Проверка
-RAILS_ENV=production rails console
-```
-
-### Яндекс Метрика
-
-1. Зарегистрироваться на [metrika.yandex.ru](https://metrika.yandex.ru)
-2. Создать счётчик для сайта
-3. Получить код счётчика
-
-#### app/views/layouts/application.html.erb
-
-```erb
-<head>
-  <title>Портфолио</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <%= csrf_meta_tags %>
-  <%= csp_meta_tag %>
-  <%= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
-
-  <%# Яндекс Метрика (только в production) %>
-  <% if Rails.env.production? %>
-    <script type="text/javascript">
-      (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-      m[i].l=1*new Date();
-      for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-      k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
-      (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
-
-      ym(ВАШ_ID, "init", {
-        clickmap:true,
-        trackLinks:true,
-        accurateTrackBounce:true
-      });
-    </script>
-    <noscript><div><img src="https://mc.yandex.ru/watch/ВАШ_ID" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-  <% end %>
-</head>
-```
-
-Замените `ВАШ_ID` на ID счётчика из Яндекс Метрики.
-
-### Результат
-- [ ] Assets прекомпилируются
-- [ ] Production config настроен
-- [ ] Яндекс Метрика подключена
-- [ ] Коммит сделан
-
----
-
-## День 14: Деплой на Kamal 2
-
-### Цель
+## Цель
 Задеплоить сайт на VPS.
 
-### Что нужно
+## Что нужно
 
 1. VPS (Hetzner/Timeweb ~300-500₽/мес)
 2. Домен (опционально)
 
-### Установка Kamal
+## Установка Kamal
 
 ```bash
 gem install kamal
 kamal init
 ```
 
-### config/deploy.yml
+## config/deploy.yml
 
 ```yaml
 service: portfolio
@@ -991,7 +496,7 @@ accessories:
       - portfolio_storage:/var/lib/postgresql/data
 ```
 
-### Деплой
+## Деплой
 
 ```bash
 # Первый раз
@@ -1001,7 +506,7 @@ kamal setup
 kamal deploy
 ```
 
-### Результат
+## Результат
 - [ ] Сайт онлайн
 - [ ] HTTPS работает
 - [ ] БД работает
@@ -1017,19 +522,19 @@ kamal deploy
 | Rails MVC | Базовый |
 | Active Record | Базовый |
 | Tailwind CSS | Базовый |
-| Turbo (SPA) | Базовый |
-| Stimulus JS | Начальный |
+| Slim | Базовый |
+| Turbo (SPA) | Начальный |
 | PostgreSQL | Начальный |
 | Kamal 2 | Начальный |
 
 ## Что дальше
 
-1. Добавить больше проектов
-2. Добавить блог
-3. Добавить авторизацию (Devise)
-4. Добавить админку
-5. Оптимизировать SEO
+1. Добавить блог
+2. Добавить авторизацию (Devise) для админки
+3. Оптимизировать SEO
+4. Добавить аналитику (Яндекс Метрика)
+5. Подключить отправку email
 
 ---
 
-*2 недели × 4 часа = 56 часов практики*
+*2 недели × 3-4 часа = ~50 часов практики*

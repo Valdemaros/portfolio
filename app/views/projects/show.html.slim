@@ -1,18 +1,82 @@
-h1 = @project.title
+/ Header с фоном
+div.bg-bottom.py-12 style="background-image: url('#{asset_path("graphy.png")}')"
+  div class="max-w-[1140px] mx-auto px-4"
+    h1.font-light.text-3xl.text-center.mt-2
+      = @project.title
 
-p = @project.description
+/ Описание проекта — блок superbox
+section.py-8
+  div class="max-w-[1140px] mx-auto px-4"
 
-- if @project.project_url.present?
-  p
-    strong Сайт:
-    = @project.project_url
+    - if @project.description.present?
+      div style="background: #f2f1ed" class="rounded-lg p-6 drop-shadow mb-8"
+        h3.font-light.text-lg.mb-4 Задача проекта:
+        p.text-stone-700
+          = @project.description
 
-- if @project.github_url.present?
-  p
-    strong GitHub:
-    = @project.project_url
+    / Картинка проекта
+    - if @project.image.attached?
+      .mb-8.rounded-lg.overflow-hidden.drop-shadow
+        = image_tag @project.image, class: "w-full"
 
-/= link_to "Редактировать", edit_project_path(@project)
-/= link_to "Назад", projects_path(@project)
-/= button_to "Удалить", @project, method: :delete
+/ Мета-информация — 2 колонки
+section.py-8
+  div class="max-w-[1140px] mx-auto px-4"
+    .flex.flex-col.md:flex-row.md:space-x-12
 
+      / Левая колонка — категории, тематики, технологии, фичи
+      .flex-1.space-y-6
+
+        / Категории
+        - if @project.category.present?
+          div
+            h4.font-light.text-lg.border-b.pb-3 Категории →
+            .space-y-3.pt-4
+              div
+                span →
+                = link_to @project.category.name, projects_path(category_id: @project.category.id),
+                  class: "decoration-stone-500 hover:text-stone-800 hover:decoration-red-800"
+
+        / Тематика
+        - if @project.theme.present?
+          div
+            h4.font-light.text-lg.border-b.pb-3 Тематика →
+            .space-y-3.pt-4
+              div
+                span →
+                = link_to @project.theme.name, projects_path(theme_id: @project.theme.id),
+                  class: "decoration-stone-500 hover:text-stone-800 hover:decoration-red-800"
+
+        / Технологии
+        - if @project.technologies.any?
+          div
+            h4.font-light.text-lg.border-b.pb-3 Технологии
+            .grid.grid-cols-2.gap-4.pt-4
+              - @project.technologies.each do |tech|
+                .flex.items-center.gap-2
+                  .w-8.h-8.bg-stone-100.rounded.p-1
+                    - if tech.icon_url.present?
+                      = image_tag tech.icon_url, class: "w-full h-full object-contain"
+                  span.text-sm.text-stone-800
+                    = tech.name
+
+        / Возможности
+        - if @project.features.any?
+          div
+            h4.font-light.text-lg.border-b.pb-3 Возможности
+            .space-y-3.pt-4
+              - @project.features.each do |feature|
+                div
+                  span.text-green-600 ✓
+                  = feature.name
+
+      / Правая колонка — ссылки
+      .md:w-1/4.space-y-6.pt-4
+        - if @project.project_url.present?
+          = link_to "Открыть сайт", @project.project_url,
+            class: "block bg-red-700 text-white px-4 py-3 rounded text-center hover:bg-red-800",
+            target: "_blank"
+        - if @project.github_url.present?
+          = link_to "GitHub", @project.github_url,
+            class: "block border border-stone-400 px-4 py-3 rounded text-center hover:border-stone-900 hover:text-stone-900",
+            target: "_blank"

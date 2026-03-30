@@ -1,10 +1,67 @@
-h1 Проекты
-/= link_to "Новый проект", new_project_path
+/ Header с фоновой картинкой
+div.bg-bottom.py-12 style="background-image: url('#{asset_path("graphy.png")}')"
+  div class="max-w-[1140px] mx-auto px-4"
+    h3.font-light.text-3xl.mt-2 Портфель проектов
 
-- @projects.each do |project|
-  div
-    h2 = project.title
-    p = project.description
-    /= link_to "Открыть", project
-    /= link_to "Редактировать", edit_project_path(project)
+/ Подзаголовок "Свежие сайты"
+section.py-2
+  div class="max-w-[1140px] mx-auto px-4"
+    h2.text-xl.font-light Свежие сайты
+    hr.border-t.border-gray-300.mt-2
 
+/ Сетка проектов
+section.py-8
+  div class="max-w-[1140px] mx-auto px-4"
+    .grid.grid-cols-2.md:grid-cols-4.gap-4
+      - @projects.each do |project|
+        = link_to project, class: "group flex flex-col space-y-2"
+          .aspect-video.bg-stone-200.rounded.drop-shadow
+            - if project.image.attached?
+              = image_tag project.image, class: "w-full h-full object-cover rounded"
+          .text-center
+            span.text-lg.text-stone-800.decoration-stone-700.group-hover:text-stone-600.group-hover:decoration-red-800
+              = project.title
+
+/ Фильтры — 4 колонки
+section.py-8
+  div class="max-w-[1140px] mx-auto px-4"
+    .grid.grid-cols-2.md:grid-cols-4.gap-4
+
+      / Категории
+      div
+        h4.font-light.text-lg.border-b.pb-3 Категории проектов →
+        .space-y-3.pt-4
+          - @categories.each do |category|
+            div
+              span →
+              = link_to category.name, projects_path(category_id: category.id),
+                class: "decoration-stone-500 hover:text-stone-800 hover:decoration-red-800"
+
+      / Тематика
+      div
+        h4.font-light.text-lg.border-b.pb-3 Тематика →
+        .space-y-3.pt-4
+          - @themes.each do |theme|
+            div
+              span →
+              = link_to theme.name, projects_path(theme_id: theme.id),
+                class: "decoration-stone-500 hover:text-stone-800 hover:decoration-red-800"
+
+      / Технологии
+      div
+        h4.font-light.text-lg.border-b.pb-3 По технологиям →
+        .space-y-3.pt-4
+          - @technologies.each do |technology|
+            div
+              = link_to technology.name, projects_path(technology_id: technology.id),
+                class: "decoration-stone-500 hover:text-stone-800 hover:decoration-red-800"
+
+      / Возможности
+      div
+        h4.font-light.text-lg.border-b.pb-3 По возможностям →
+        .space-y-3.pt-4
+          - @features.each do |feature|
+            div
+              span.text-green-600 ✓
+              = link_to feature.name, projects_path(feature_id: feature.id),
+                class: "decoration-stone-500 hover:text-stone-800 hover:decoration-red-800"

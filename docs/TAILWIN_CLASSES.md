@@ -245,10 +245,10 @@
 
 ### Примеры
 
-| Класс | Мобильный | Планшет | Десктоп |
-|-------|-----------|---------|---------|
-| `text-2xl md:text-4xl` | 24px | 36px | 36px |
-| `grid-cols-1 md:grid-cols-2 lg:grid-cols-3` | 1 кол | 2 кол | 3 кол |
+| Класс                                       | Мобильный | Планшет | Десктоп |
+| ------------------------------------------- | --------- | ------- | ------- |
+| `text-2xl md:text-4xl`                      | 24px      | 36px    | 36px    |
+| `grid-cols-1 md:grid-cols-2 lg:grid-cols-3` | 1 кол     | 2 кол   | 3 кол   |
 
 ---
 
@@ -302,7 +302,7 @@ nav.bg-stone-800.text-white.py-4
 ### Hero
 ```slim
 section.bg-stone-700.text-white.py-40
-  .container.mx-auto.px-4.text-center
+  .
     h1.text-4xl.font-bold.mb-4 Веб разработка
     p.text-xl.text-stone-300 Подзаголовок
 ```
