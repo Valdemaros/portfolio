@@ -1,8 +1,8 @@
 Rails.application.routes.draw do
   root "pages#home"
 
-  get "about", to: "pages#about"
-  get "contact", to: "pages#contact"
+  get "services", to: "pages#services"
+  get "tz", to: "pages#tz"
 
   resources :projects
 end

@@ -23,5 +23,7 @@ html
     = javascript_importmap_tags
 
   body.h-full
+    = render "shared/navbar"
     main
       = yield
+    = render "shared/footer"

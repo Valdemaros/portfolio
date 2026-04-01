@@ -1,0 +1,50 @@
+footer.border-t.mt-16.py-6.text-sm.text-stone-600
+  .container.mx-auto.px-4.space-y-4
+    / верх: слева контакты, справа юр.инфа
+    .flex.flex-wrap.items-start.justify-between.gap-6
+      / ЛЕВАЯ КОЛОНКА
+      .space-y-1
+        p
+          span.font-semibold Email для связи:
+          = mail_to " kuzmenkov.vova2@gmail", "kuzmenkov.vova2@gmail",
+            class: "underline underline-offset-4"
+        p
+          span.font-semibold ТГ канал:
+          = link_to " https://t.me/apavlyut", "https://t.me/apavlyut",
+            class: "underline underline-offset-4"
+        p
+          span.font-semibold Youtube:
+          = link_to " https://youtube.com/@apavlyut", "https://youtube.com/@apavlyut",
+            class: "underline underline-offset-4"
+        p
+          span.font-semibold CV профиль:
+          = link_to " Владимир Кузьменьков", "https://apavlyut.ru/p/cv/",
+            class: "underline underline-offset-4"
+
+      / ПРАВАЯ КОЛОНКА
+      .text-right.space-y-1.text-xs.sm:text-sm
+        p.space-x-3
+          = link_to "Условия использования", "https://apavlyut.ru/p/offer",
+            class: "underline underline-offset-4"
+          = link_to "Политика обработки персональных данных", "https://apavlyut.ru/p/rules",
+            class: "underline underline-offset-4"
+          = link_to "Перечень услуг", "https://apavlyut.ru/p/offers",
+            class: "underline underline-offset-4"
+        p ИП Кузьменьков В.О. ОГРНИП 324508100057636
+        p Место оказания услуг: г. Москва, Московская область
+
+    / НИЖНЯЯ ЦЕНТРАЛЬНАЯ СТРОКА
+    .text-center.text-xs.text-stone-500
+      | ©
+      = " "
+      = link_to "2011", "https://web.archive.org/web/20150111041947/http://www.deppkind.com/",
+        class: "underline underline-offset-4"
+      = " → "
+      = link_to "2015", "https://web.archive.org/web/20160316194848/http://www.deppkind.com/",
+        class: "underline underline-offset-4"
+      = " → "
+      = link_to "2018", "http://web.archive.org/web/20210303181508/https://pavlyut.com/",
+        class: "underline underline-offset-4"
+      = " → "
+      = link_to "2024", "https://www.apavlyut.ru/",
+        class: "underline underline-offset-4"

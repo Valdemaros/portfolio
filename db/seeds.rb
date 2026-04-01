@@ -1,4 +1,6 @@
 puts "Очистка БД..."
+ProjectCategory.destroy_all
+ProjectTheme.destroy_all
 ProjectFeature.destroy_all
 ProjectTechnology.destroy_all
 Project.destroy_all
@@ -120,9 +122,37 @@ services_data = [
 services_data.each { |data| Service.create!(data) }
 puts "  Создано услуг: #{Service.count}"
 
+puts "\nСоздание проектов..."
+project = Project.create!(
+  title: "Тестовый проект",
+  description: "Описание тестового проекта",
+  project_url: "#",
+  featured: true,
+  position: "1"
+)
+# Добавляем несколько категорий
+project.categories << Category.find_by(name: "Стартап")
+project.categories << Category.find_by(name: "Веб-Сервис")
+
+# Добавляем несколько тематик
+project.themes << Theme.find_by(name: "Продуктивность")
+project.themes << Theme.find_by(name: "Образование")
+
+# Добавляем технологии
+project.technologies << Technology.find_by(name: "Ruby on Rails")
+project.technologies << Technology.find_by(name: "PostgreSQL")
+project.technologies << Technology.find_by(name: "TailwindCSS")
+
+# Добавляем фичи
+project.features << Feature.find_by(name: "CMS")
+project.features << Feature.find_by(name: "SEO управление содержимым")
+project.features << Feature.find_by(name: "Авторизация / Регистрация через SMS")
+
+
 puts "\nГотово!"
 puts "Категорий: #{Category.count}"
 puts "Тем: #{Theme.count}"
 puts "Технологий: #{Technology.count}"
 puts "Возможностей: #{Feature.count}"
 puts "Услуг: #{Service.count}"
+puts "  Создано проектов: #{Project.count}"
