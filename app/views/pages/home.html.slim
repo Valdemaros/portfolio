@@ -1,78 +1,52 @@
-section.bg-stone-700.text-white.py-40
+section.bg-stone-300.text-white.py-40 style="background-image: url('#{asset_path("logo.png")}')"
   .container.mx-auto.px-4.text-center
-    h1.text-4xl.font-bold.mb-4 Веб разработка любой сложности
-    p.text-xl.text-stone-300 От идеи до запуска и развития
+    .group.flex.flex-col.items-center
+      = link_to services_path, class: "flex items-center gap-3"
+        div.text-white.text-center.space-y-4
+          span.block.text-6xl.group-hover:underline.group-hover:decoration-red-800 Веб разработка любой сложности
+          span.block.text-3xl.group-hover:underline.group-hover:decoration-red-800 От идеи до запуска и развития
+          span.block.text-2xl.underline.group-hover:underline.group-hover:decoration-red-800 узнать больше→
 
-section.bg-neutral-300.text-black.py-3
+section.text-lg.text-black.py-2
   .container.mx-auto.px-4.text-center
-    h1.text-xl.font-bold.mb-2 Для кого: бизнесмена, предпринемателя, директора, руководителя любого уровня
+    h1.italic.underline.mb-2 Для кого: бизнесмена, предпринемателя, директора, руководителя любого уровня
 
-section.bg-cyan-200.py-20
-  .container.mx-auto.px-4.text-center
-    h1.text-2xl.italic 
-    .flex.flex-wrap.justify-center.gap-3
-      span.px-3.py-1 Стартапы
-      span.bg-white.rounded-full.px-3.py-1 Корпоративные сайты
-      span.bg-white.rounded-full.px-3.py-1 Интернет-магазины
-      span.bg-white.rounded-full.px-3.py-1 PLM системы
-      span.bg-white.rounded-full.px-3.py-1 CRM системы
-      span.bg-white.rounded-full.px-3.py-1 Нестандартные решения
-      span.bg-white.rounded-full.px-3.py-1 Каталоги
-      span.bg-white.rounded-full.px-3.py-1 Тематические биржы
-      span.bg-white.rounded-full.px-3.py-1 Веб-Сервисы
-      span.bg-white.rounded-full.px-3.py-1 API для мобильных приложений
-      span.bg-white.rounded-full.px-3.py-1 Посадочные страницы
-      span.bg-white.rounded-full.px-3.py-1 ERP системы
-      span.bg-white.rounded-full.px-3.py-1 Спортивные клубы
+section.bg-sky-100.py-20
+  div class="max-w-[890px] mx-auto px-4"
+    .flex.flex-wrap.justify-center.gap-x-8.gap-y-3.text-xl.text-center
+      - @categories.each do |category|
+          span.underline
+            = category.name
 
-section.bg-white.py-50
-  .container.mx-auto.px-4
-    h2.text-5xl.italic.mb-4.text-center  Реализованные проекты
 
-    .grid.grid-cols-1.md:grid-cols-2.lg:grid-cols-3.gap-6
-      .border.rounded.overflow-hidden.hover:shadow-lg.transition.w-60.h-80
-          .aspect-video.bg-stone-200.
-          .p-4
-            h3.font-bold Проект 1
-            p.text-stone-600.text-sm.mt-1 Описание проекта
 
-      .border.rounded.overflow-hidden.hover:shadow-lg.transition.w-60.h-80
-          .aspect-video.bg-stone-200
-          .p-4
-            h3.font-bold Проект 2
-            p.text-stone-600.text-sm.mt-1 Описание проекта
+section.text-center.py-8
+  div class="max-w-[890px] mx-auto px-4"
+    h2.text-4xl.font-light Реализованные проекты
+    hr.border-t.border-gray-300.mt-2V
 
-      .border.rounded.overflow-hidden.hover:shadow-lg.transition.w-60.h-80
-          .aspect-video.bg-stone-200
-          .p-4
-            h3.font-bold Проект 3
-            p.text-stone-600.text-sm.mt-1 Описание проекта
-
+section.py-8
+  div class="max-w-[890px] mx-auto px-4"
+    .grid.grid-cols-2.md:grid-cols-4.gap-4
+      - @projects.each do |project|
+        = link_to project, class: "group flex flex-col space-y-2"
+          .aspect-video.bg-stone-200.rounded.drop-shadow
+            - if project.image.attached?
+              = image_tag project.image, class: "w-full h-full object-cover rounded"
+          .text-center
+            span.text-lg.text-stone-800.decoration-stone-700.group-hover:text-stone-600.group-hover:decoration-red-800
+              = project.title
     .text-center.mt-8
       = link_to "Все проекты →", projects_path, class: "text-red-600 hover:text-red-700"
 
-section.bg-teal-50.py-20
-  .container.mx-auto.px-4
-    h1.text-2xl.italic.text-center Технологии
-
-    .flex.flex-col.items-center.gap-2
-      .w-16.h-16.bg-white.border.rounded.p-2.flex.items-center.justify-center
-        = image_tag "https://rubyonrails.org/assets/images/logo.svg", class: "w-50 h-50 object-contain"
-      span.text-sm Ruby on Rails
-      
-    .flex.flex-col.items-center.gap-2
-      .w-16.h-16.bg-white.border.rounded.p-2.flex.items-center.justify-center
-        = image_tag "http://www.w3.org/2000/svg", class: "w-50 h-50 object-contain"
-      span.text-sm Hotwire
-
-    .flex.flex-col.items-center.gap-2
-      .w-16.h-16.bg-white.border.rounded.p-2.flex.items-center.justify-center
-        = image_tag "https://rubyonrails.org/assets/images/logo.svg", class: "w-50 h-50 object-contain"
-      span.text-sm Ruby
-
-    .flex.flex-col.items-center.gap-2
-      .w-16.h-16.bg-white.border.rounded.p-2.flex.items-center.justify-center
-        = image_tag "https://rubyonrails.org/assets/images/logo.svg", class: "w-50 h-50 object-contain"
-      span.text-sm Kamal
-
-
+section.py-20
+  div class="max-w-[890px] mx-auto px-4"
+    h1.text-4xl.font-light.text-center.pb-3 Технологии
+    hr.border-t.border-gray-300.mt-2V
+    .grid.flex.flex-cols-2.md:grid-cols-2.lg:grid-cols-4.gap-6.mt-5
+      - @technologies.each do |technology|
+        div
+          span
+            = image_tag technology.icon, class: "object-contain max-h-[80px] max-w-[130px] rounded-lg border p-1"
+          span.underline
+            = technology.name

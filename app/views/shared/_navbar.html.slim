@@ -1,10 +1,11 @@
-nav.bg-stone-800.text-white.py-1
+nav.bg-stone-800.text-white.py-2
   .px-4.ml-2.mr-2.flex.justify-between.items-center
-    = link_to root_path, class: "flex.items-center.gap-3"
-      .w-10.h-10.bg-red-700.rounded-full
+    = link_to root_path, class: "flex items-center gap-3"
+      .w-15.h-15.rounded-full.border-2.border-orange-500.overflow-hidden
+        = image_tag "sins.jpeg", class: "w-full h-full object-cover"
       div
-        .text-xl Владимир
-        /.text-sm.text-stone-400 Веб-разработчик
+        .text-xl Владимир Кузьменьков
+        .text-sm.text-stone-400 Веб-разработчик
 
     .flex.uppercase.pb-1.gap-8
       = link_to "Услуги", services_path, class: "hover:text-red-400"

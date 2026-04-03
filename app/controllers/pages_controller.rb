@@ -1,5 +1,8 @@
 class PagesController < ApplicationController
   def home
+    @technologies = Technology.all
+    @projects = Project.all
+    @categories = Category.all
   end
 
   def services
